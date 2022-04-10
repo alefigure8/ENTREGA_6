@@ -12,11 +12,14 @@ class Contenedor {
 
     const prods = await readFS();
     const parseProd = JSON.parse(prods);
+    const date = new Date().toLocaleString();
 
     if(prods && parseProd.length !== 0){
+      saveObj.date = date
       saveObj.id = this.id+=1;
       await writeFS(JSON.stringify([...parseProd, saveObj], null, 2));
     } else {
+      saveObj.date = date
       saveObj.id = 1;
       const arr = new Array(saveObj);
       await writeFS(JSON.stringify(arr, null, 2));
@@ -90,7 +93,7 @@ class Contenedor {
 // Lee el archivo txt
 async function readFS(){
   try {
-    const data =  await fs.promises.readFile('./files/products.txt', 'utf-8');
+    const data =  await fs.promises.readFile('./files/comments.txt', 'utf-8');
     return data;
   } catch (err){
     return false;
@@ -100,7 +103,7 @@ async function readFS(){
 // Escribe el archivo txt
 async function writeFS(data){
   try {
-    await fs.promises.writeFile('./files/products.txt', data);
+    await fs.promises.writeFile('./files/comments.txt', data);
   } catch (err){
     throw new Error (err);
   }

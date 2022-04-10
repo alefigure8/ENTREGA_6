@@ -1,7 +1,9 @@
 const express = require('express');
 const { engine } = require('express-handlebars');
 const Productos = require('./api/contenedor')
+const Comments = require('./api/contenedor_msg')
 const producto = new Productos()
+const comments = new Comments()
 
 const {Server: IOServer} = require('socket.io');
 const {Server: HttpServer} = require('http');
@@ -41,10 +43,17 @@ server.on('error', err => {
 })
 
 // socket
+
 io.on('connection', (socket) => {
-  socket.on('newProduct', async (msg)=>{
-    await producto.save(msg);
+  socket.on('newProduct', async (data)=>{
+    await producto.save(data);
     const productosLista = await producto.getAll()
-    io.sockets.emit('message', productosLista);
+    io.sockets.emit('product', productosLista);
+  })
+
+  socket.on('newMsg', async (msg)=>{
+    await comments.save(msg);
+    const commentsList = await comments.getAll()
+    io.sockets.emit('message', commentsList);
   })
 })
